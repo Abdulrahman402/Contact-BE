@@ -64,7 +64,7 @@ function updateUser(user) {
   const schema = {
     name: joi.string(),
     newName: joi.string(),
-    password: joi.string(),
+    oldPW: joi.string(),
     newPW: joi
       .string()
       .min(6)

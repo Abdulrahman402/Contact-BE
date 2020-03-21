@@ -18,6 +18,24 @@ router.get("/:id", auth, async (req, res) => {
   res.send(user);
 });
 
+router.get("/search/user", auth, async (req, res, next) => {
+  const page = req.query.page;
+  const perPage = 20;
+  const query = req.query.search;
+
+  // search for a User
+  const user = await User.find({
+    name: { $regex: query, $options: "i" }
+  })
+    .select("-password")
+
+    // pagination
+    .limit(perPage)
+    .skip((page - 1) * perPage);
+
+  res.send(user);
+});
+
 router.post("/SignUp", async (req, res) => {
   const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -37,6 +55,66 @@ router.post("/SignUp", async (req, res) => {
   await user.save();
 
   res.header("x-auth-token", token).send(_.pick(user, "email", "name"));
+});
+
+router.put("/ChangePassword", auth, async (req, res, next) => {
+  const { error } = updateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const user = await User.findOne({ _id: req.user._id });
+  const oldPW = await bcrypt.compare(req.body.oldPW, user.password);
+  if (!oldPW) return res.status(400).send("Invalid old password");
+
+  const newUser = await User.findByIdAndUpdate(
+    req.user._id,
+    { password: req.body.newPW },
+    { new: true }
+  );
+
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(newUser.password, salt);
+
+  await user.save();
+
+  res.send(_.pick(user, ["name", "email", "profPic"]));
+});
+
+router.put("/ChangeName", auth, async (req, res, next) => {
+  const { error } = updateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { name: req.body.newName },
+    { new: true }
+  );
+  await user.save();
+
+  res.send(_.pick(user, ["name", "email", "profPic"]));
+});
+
+router.put("/ChangeGender", auth, async (req, res, next) => {
+  const { error } = updateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const user = await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: { gender: req.body.gender } },
+    { new: true }
+  );
+  res.send(_.pick(user, ["name", "email", "profPic"]));
+});
+
+router.put("/ChangeDOB", auth, async (req, res, next) => {
+  const { error } = updateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const user = await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: { DOB: req.body.DOB } },
+    { new: true }
+  );
+  res.send(_.pick(user, ["name", "email", "profPic"]));
 });
 
 module.exports = router;
