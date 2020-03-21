@@ -6,18 +6,21 @@ const bcrypt = require("bcryptjs");
 const { validateUser, updateUser, User } = require("../Models/User");
 const auth = require("../Middleware/auth");
 
+// My Profile
 router.get("/profile/me", auth, async (req, res) => {
   const user = await User.findOne({ _id: req.user._id }).select("-password");
 
   res.send(user);
 });
 
+// User Profile
 router.get("/:id", auth, async (req, res) => {
   const user = await User.findById(req.params.id).select("-password ");
 
   res.send(user);
 });
 
+// Search
 router.get("/search/user", auth, async (req, res, next) => {
   const page = req.query.page;
   const perPage = 20;
@@ -36,6 +39,7 @@ router.get("/search/user", auth, async (req, res, next) => {
   res.send(user);
 });
 
+// Register
 router.post("/SignUp", async (req, res) => {
   const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -57,6 +61,7 @@ router.post("/SignUp", async (req, res) => {
   res.header("x-auth-token", token).send(_.pick(user, "email", "name"));
 });
 
+// Change Password
 router.put("/ChangePassword", auth, async (req, res, next) => {
   const { error } = updateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -79,6 +84,7 @@ router.put("/ChangePassword", auth, async (req, res, next) => {
   res.send(_.pick(user, ["name", "email", "profPic"]));
 });
 
+// Change Name
 router.put("/ChangeName", auth, async (req, res, next) => {
   const { error } = updateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -93,6 +99,7 @@ router.put("/ChangeName", auth, async (req, res, next) => {
   res.send(_.pick(user, ["name", "email", "profPic"]));
 });
 
+// Change Gender
 router.put("/ChangeGender", auth, async (req, res, next) => {
   const { error } = updateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -105,6 +112,7 @@ router.put("/ChangeGender", auth, async (req, res, next) => {
   res.send(_.pick(user, ["name", "email", "profPic"]));
 });
 
+// Change Date Of Birth
 router.put("/ChangeDOB", auth, async (req, res, next) => {
   const { error } = updateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
