@@ -6,12 +6,12 @@ const cors = require("cors");
 
 const app = express();
 
-app.use("/Image", express.static("Image"));
+// app.use("/Image", express.static("Image"));
 const keys = require("./Config/keys");
 const user = require("./Routes/user");
 const auth = require("./Routes/auth");
 const friend = require("./Routes/friends");
-const image = require("./Routes/image");
+// const image = require("./Routes/image");
 
 mongoose
   .connect(keys.mongoURI)
@@ -38,6 +38,6 @@ app.use(express.json());
 app.use("/api/user", user);
 app.use("/api/user", auth);
 app.use("/api/friend", friend);
-app.use("/api/image", image);
+// app.use("/api/image", image);
 
 module.exports = server;
