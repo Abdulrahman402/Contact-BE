@@ -6,6 +6,13 @@ const cors = require("cors");
 
 const app = express();
 
+const corsOptions = {
+  exposedHeaders: "x-auth-token"
+};
+
+app.use(cors(corsOptions));
+app.use(cors());
+
 // app.use("/Image", express.static("Image"));
 const keys = require("./Config/keys");
 const user = require("./Routes/user");
@@ -28,12 +35,6 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-const corsOptions = {
-  exposedHeaders: "x-auth-token"
-};
-
-app.use(cors(corsOptions));
-app.use(cors());
 app.use(express.json());
 app.use("/api/user", user);
 app.use("/api/user", auth);
