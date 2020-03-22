@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const app = express();
 
+app.use("/Image", express.static("Image"));
 const keys = require("./Config/keys");
 const user = require("./Routes/user");
 const auth = require("./Routes/auth");
