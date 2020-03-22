@@ -2,8 +2,9 @@ const express = require("express");
 
 const router = express.Router();
 
-const { User } = require("../../Models/User");
-const { Friends } = require("../../Models/Friend");
+const { User } = require("../Models/User");
+const { Friends } = require("../Models/Friend");
+const auth = require("../Middleware/auth");
 
 // Add Friend
 router.post("/addUser/:id", auth, async (req, res) => {
@@ -122,3 +123,5 @@ router.get("/allFriends", auth, async (req, res) => {
     res.send(search);
   }
 });
+
+module.exports = router;

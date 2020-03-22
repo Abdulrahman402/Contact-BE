@@ -9,6 +9,8 @@ const app = express();
 const keys = require("./Config/keys");
 const user = require("./Routes/user");
 const auth = require("./Routes/auth");
+const friend = require("./Routes/friends");
+const image = require("./Routes/image");
 
 mongoose
   .connect(keys.mongoURI)
@@ -34,5 +36,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/user", user);
 app.use("/api/user", auth);
+app.use("/api/friend", friend);
+app.use("/api/image", image);
 
 module.exports = server;
